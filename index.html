@@ -1,1 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for dense look */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen font-sans transition-colors duration-200">
 
+    <!-- TOP HEADER -->
+    <header class="border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white font-bold shadow-md shadow-emerald-500/20">
+                    D
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-none tracking-tight">Dashboard</h1>
+                    <span class="text-xs text-slate-500 dark:text-slate-400">Workspace & Teaching Hub</span>
+                </div>
+            </div>
+
+            <!-- Global Search & Tab Selectors -->
+            <div class="flex items-center gap-3 flex-1 max-w-md md:justify-center">
+                <!-- Tab Buttons -->
+                <div class="bg-slate-100 dark:bg-slate-800 p-1 rounded-xl flex items-center w-full sm:w-auto">
+                    <button id="tab-links-btn" onclick="switchTab('links')" class="flex-1 sm:flex-initial px-4 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white">
+                        Links
+                    </button>
+                    <button id="tab-schedule-btn" onclick="switchTab('schedule')" class="flex-1 sm:flex-initial px-4 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                        Schedule
+                    </button>
+                </div>
+
+                <!-- Instant Filter Input (Links view only) -->
+                <div id="search-container" class="relative hidden sm:block w-48 lg:w-64">
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="Quick filter..." 
+                        oninput="filterLinks(this.value)"
+                        class="w-full bg-slate-100 dark:bg-slate-800 text-xs px-3 py-2 pl-8 rounded-lg border-none focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                    />
+                    <svg class="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Top Right Fun Corner: Audio Player & Minesweeper Activator -->
+            <div class="flex items-center gap-3">
+                
+                <!-- Sleek Audio Player Widget -->
+                <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+                    <select id="audio-select" onchange="changeAudioSource()" class="bg-transparent text-sm focus:outline-none pl-1 pr-1 cursor-pointer dark:bg-slate-800 rounded">
+                        <option value="jazz">🎷</option>
+                        <option value="house">🏠</option>
+                        <option value="sound">🌧️</option>
+                    </select>
+                    <button id="audio-play-btn" onclick="toggleAudio()" class="w-7 h-7 flex items-center justify-center rounded-lg bg-emerald-500 text-white hover:scale-105 active:scale-95 transition-transform" title="Play/Pause Focus Music">
+                        <!-- Play Icon -->
+                        <svg id="play-icon" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                        </svg>
+                        <!-- Pause Icon -->
+                        <svg id="pause-icon" class="w-3.5 h-3.5 hidden" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Minesweeper Button -->
+                <button onclick="toggleMinesweeperModal()" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors group flex items-center justify-center" title="Play Minesweeper">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform">
+                      <path d="M22 12c0-3.313-2.687-6-6-6H8c-3.313 0-6 2.687-6 6s2.687 6 6 6h8c3.313 0 6-2.687 6-6zm-13 1H7v2H6v-2H4v-1h2V9h1v3h2v1zm4-1.5c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5 1.5.672 1.5 1.5-.672 1.5-1.5 1.5zm3 3c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5 1.5.672 1.5 1.5-.672 1.5-1.5 1.5z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN BODY CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        
+        <!-- Tab 1: Links (Grid / Bento Layout) -->
+        <div id="tab-links-content" class="transition-opacity duration-200">
+            <!-- Mobile Search Bar -->
+            <div class="block sm:hidden mb-4 relative">
+                <input 
+                    type="text" 
+                    placeholder="Quick filter..." 
+                    oninput="filterLinks(this.value)"
+                    class="w-full bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-sm px-3 py-2.5 pl-9 rounded-lg focus:ring-1 focus:ring-emerald-500 focus:outline-none shadow-sm"
+                />
+                <svg class="w-4 h-4 absolute left-3 top-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+
+            <!-- Dynamic Bento Box Container -->
+            <div id="links-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- JS dynamically injects category card blocks here -->
+            </div>
+        </div>
+
+        <!-- Tab 2: Schedule (Professional Day View) -->
+        <div id="tab-schedule-content" class="hidden opacity-0 transition-opacity duration-200">
+            <!-- Active Day Quick Navigation -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-4 border-b border-slate-200 dark:border-slate-800 scrollbar-none" id="schedule-day-nav">
+                <!-- Inject Day Selectors here dynamically -->
+            </div>
+
+            <!-- Timetable Display Container -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                    <h3 class="font-bold text-base flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                        <span id="active-day-title">Today's Teaching Schedule</span>
+                    </h3>
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/30">
+                        Academic Term
+                    </span>
+                </div>
+                <div class="divide-y divide-slate-100 dark:divide-slate-800/50" id="schedule-timeline">
+                    <!-- Dynamic timeline rows injected here -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MINESWEEPER POPUP MODAL -->
+    <div id="minesweeper-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-2xl max-w-sm w-full relative">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-200 dark:border-slate-800">
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <h3 class="font-bold text-sm">Retro Minesweeper</h3>
+                </div>
+                <button onclick="toggleMinesweeperModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg">&times;</button>
+            </div>
+
+            <!-- Game Engine Bar -->
+            <div class="flex items-center justify-between bg-slate-100 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-200/50 mb-4 font-mono text-sm font-semibold select-none">
+                <!-- Mine Counter -->
+                <div class="text-red-500" id="mine-counter">🚩 010</div>
+                <!-- Restart Face Icon Button -->
+                <button onclick="initMinesweeper()" class="hover:scale-110 active:scale-95 transition-transform text-lg" id="ms-face-btn">😊</button>
+                <!-- Game Timer -->
+                <div class="text-emerald-500" id="ms-timer">⏱️ 000</div>
+            </div>
+
+            <!-- Game Matrix Board -->
+            <div id="minesweeper-grid" class="grid grid-cols-9 gap-1 aspect-square bg-slate-200 dark:bg-slate-950 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800/50 mb-3 overflow-hidden select-none">
+                <!-- Grid Cells injected here dynamically by Javascript -->
+            </div>
+
+            <!-- Mobile Controls / Actions Toggle -->
+            <div class="flex items-center justify-between gap-2 mt-4">
+                <button onclick="initMinesweeper()" class="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold py-2 rounded-xl border border-slate-200/50 transition-colors">
+                    Reset Game
+                </button>
+                
+                <!-- Tool Selector Switch: Reveal (Bomb) vs Flag (Marker) -->
+                <div class="bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl flex items-center border border-slate-200 dark:border-slate-700/50">
+                    <button id="ms-mode-dig" onclick="setMSMode('dig')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-500 text-white transition-all shadow-sm flex items-center gap-1">
+                        💣
+                    </button>
+                    <button id="ms-mode-flag" onclick="setMSMode('flag')" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-500 dark:text-slate-400 transition-all flex items-center gap-1">
+                        🚩
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="mt-12 mb-6 text-center text-xs text-slate-400 dark:text-slate-600">
+        <p>Press <kbd class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-800 rounded">Esc</kbd> or <kbd class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-800 rounded">/</kbd> to search/filter. Single-file responsive Link Dashboard.</p>
+    </footer>
+
+    <!-- CENTRAL JS CONFIGURATION & ENGINE -->
+    <script>
+        /**
+         * DYNAMIC DATA DICTIONARY
+         * Modify this JSON structure to instantly add, edit, or remove links, categories, or schedules.
+         */
+        const DASHBOARD_DATA = {
+            links: [
+                {
+                    category: "Schools",
+                    description: "Select schedule or view staff lists for each school.",
+                    accentColor: "border-l-4 border-l-rose-500",
+                    groups: [
+                        {
+                            subHeading: "JLAES🐊",
+                            items: [
+                                { title: "Referrals 📊", url: "#jlaes-referrals", subtitle: "Referral spreadsheet database" },
+                                { title: "Schedule 📅", url: "#jlaes-schedule", subtitle: "Bell & class times" },
+                                { title: "Faculty 👥", url: "#jlaes-faculty", subtitle: "Staff & email roster" },
+                                { title: "School Drive 📁", url: "#jlaes-drive", subtitle: "Shared Google Drive" }
+                            ]
+                        },
+                        {
+                            subHeading: "FOES🐦",
+                            items: [
+                                { title: "Referrals 📊", url: "#foes-referrals", subtitle: "Referral spreadsheet database" },
+                                { title: "Schedule 📅", url: "#foes-schedule", subtitle: "Bell & class times" },
+                                { title: "Faculty 👥", url: "#foes-faculty", subtitle: "Staff & email roster" },
+                                { title: "Morning Announcements 📣", url: "#foes-announcements", subtitle: "Daily morning broadcast" },
+                                { title: "School Hub 🏫", url: "#foes-hub", subtitle: "FOES shared portal" }
+                            ]
+                        },
+                        {
+                            subHeading: "HVA🖥️",
+                            items: [
+                                { title: "Referrals 📊", url: "#hva-referrals", subtitle: "Referral spreadsheet database" },
+                                { title: "Schedule 📅", url: "#hva-schedule", subtitle: "Bell & class times" },
+                                { title: "Faculty 👥", url: "#hva-faculty", subtitle: "Staff & email roster" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    category: "Access",
+                    description: "Direct student and teacher portal gateways.",
+                    accentColor: "border-l-4 border-l-amber-500",
+                    items: [
+                        { title: "Mr M's Drive", url: "https://drive.google.com", subtitle: "Google Drive files" },
+                        { title: "Planning", url: "#planning", subtitle: "Lesson & schedule planning" },
+                        { title: "DL Course", url: "#dl-course", subtitle: "Digital learning systems" },
+                        { title: "Schoology", url: "https://schoology.com", subtitle: "LMS & coursework" },
+                        { title: "PowerSchool", url: "https://powerschool.com", subtitle: "Grades & records" },
+                        { title: "CogAT", url: "https://riversideinsights.com", subtitle: "Cognitive abilities test" },
+                        { title: "Clever", url: "https://clever.com", subtitle: "Single sign-on portal" }
+                    ]
+                },
+                {
+                    category: "GRT",
+                    description: "Gifted Resource Teacher programmatic files and dashboards.",
+                    accentColor: "border-l-4 border-l-blue-500",
+                    items: [
+                        { title: "Friday Focus", url: "#friday-focus", subtitle: "Weekly focus & notes" },
+                        { title: "Meeting Agendas", url: "#meeting-agendas", subtitle: "Collaboration & minutes" },
+                        { title: "Gifted Dashboard", url: "#gifted-dashboard", subtitle: "Student records & data" },
+                        { title: "K-5 Advanced Dashboard", url: "#k5-advanced-dashboard", subtitle: "Advanced learner tracking" },
+                        { title: "Staffing", url: "#staffing", subtitle: "Allocations & rosters" }
+                    ]
+                },
+                {
+                    category: "Gifted Curriculum",
+                    description: "Primary responses and grade curriculum systems.",
+                    accentColor: "border-l-4 border-l-purple-500",
+                    items: [
+                        { title: "K-2 Response", url: "#k2-response", subtitle: "Response materials" },
+                        { title: "1st", url: "#1st-grade", subtitle: "Grade curriculum" },
+                        { title: "2nd", url: "#2nd-grade", subtitle: "Grade curriculum" },
+                        { title: "3rd", url: "#3rd-grade", subtitle: "Grade curriculum" },
+                        { title: "4th", url: "#4th-grade", subtitle: "Grade curriculum" },
+                        { title: "5th", url: "#5th-grade", subtitle: "Grade curriculum" }
+                    ]
+                },
+                {
+                    category: "Gifted ID",
+                    description: "Identification timelines, referral forms, and screening lessons.",
+                    accentColor: "border-l-4 border-l-cyan-500",
+                    items: [
+                        { title: "Timeline", url: "#timeline", subtitle: "Referral & testing windows" },
+                        { title: "Forms", url: "#forms", subtitle: "Referral, permission, and rating scales" },
+                        { title: "Observation Lessons", url: "#observation-lessons", subtitle: "Whole-class screening materials" },
+                        { title: "GIC Group", url: "#gic-group", subtitle: "Gifted Identification Committee roster" }
+                    ]
+                },
+                {
+                    category: "Admin",
+                    description: "Administrative portals and employee systems.",
+                    accentColor: "border-l-4 border-l-slate-500",
+                    isCollapsible: true,
+                    items: [
+                        { title: "HCPS Aligned Curriculum", url: "#hcps-curriculum", subtitle: "Aligned curriculum framework" },
+                        { title: "HCPS Tech Desk", url: "#hcps-tech-desk", subtitle: "IT support ticketing system" },
+                        { title: "PSPL", url: "#pspl", subtitle: "Professional learning & training" },
+                        { title: "TalentEd", url: "#talented", subtitle: "Performance management portal" },
+                        { title: "Oracle EDA", url: "#oracle-eda", subtitle: "Financials & HR dashboard" },
+                        { title: "MyVRS", url: "#myvrs", subtitle: "Retirement benefits dashboard" },
+                        { title: "MissionSquare Retirement", url: "#missionsquare", subtitle: "Retirement asset manager" }
+                    ]
+                }
+            ],
+            schedule: [
+                {
+                    day: "Monday",
+                    classes: [
+                        { time: "09:00 AM - 10:30 AM", course: "CS 101: Intro to Programming", room: "Tech Hall 203", type: "Lecture" },
+                        { time: "11:00 AM - 12:30 PM", course: "CS 302: Database Architectures", room: "Science Block 4B", type: "Lecture" },
+                        { time: "02:00 PM - 03:30 PM", course: "Office Hours", room: "Faculty Suite 12", type: "Office Hours" }
+                    ]
+                },
+                {
+                    day: "Tuesday",
+                    classes: [
+                        { time: "10:00 AM - 11:30 AM", course: "CS 101: Lab Section A", room: "Lab A, Annex", type: "Lab" },
+                        { time: "01:00 PM - 02:30 PM", course: "Department Seminar", room: "Main Auditorium", type: "Meeting" }
+                    ]
+                },
+                {
+                    day: "Wednesday",
+                    classes: [
+                        { time: "09:00 AM - 10:30 AM", course: "CS 101: Intro to Programming", room: "Tech Hall 203", type: "Lecture" },
+                        { time: "11:00 AM - 12:30 PM", course: "CS 302: Database Architectures", room: "Science Block 4B", type: "Lecture" },
+                        { time: "03:00 PM - 05:00 PM", course: "CS 499: Senior Capstones", room: "Design Studio", type: "Seminar" }
+                    ]
+                },
+                {
+                    day: "Thursday",
+                    classes: [
+                        { time: "10:00 AM - 11:30 AM", course: "CS 101: Lab Section B", room: "Lab A, Annex", type: "Lab" },
+                        { time: "02:00 PM - 03:30 PM", course: "Office Hours", room: "Faculty Suite 12", type: "Office Hours" }
+                    ]
+                },
+                {
+                    day: "Friday",
+                    classes: [
+                        { time: "09:00 AM - 11:00 AM", course: "Research & Development Block", room: "Office Studio", type: "Research" },
+                        { time: "01:00 PM - 02:30 PM", course: "Curriculum Planning", room: "Virtual Meet", type: "Meeting" }
+                    ]
+                }
+            ]
+        };
+
+        // AUDIO CONTEXT SOURCES (Fixed CORS/Hotlinking restrictions for rain sound loop)
+        const AUDIO_SOURCES = {
+            jazz: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // Relaxing synth/jazz-style lounge loop
+            house: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', // Upbeat deep-chill focus house rhythm
+            sound: 'https://raw.githubusercontent.com/rafaelreis-hotmart/Rain-Sound/master/rain.mp3' // High-quality loopable rain sound
+        };
+
+        let bgAudio = null;
+        let isAudioPlaying = false;
+
+        // Track Current UI State
+        let currentTab = 'links';
+        let currentScheduleDay = '';
+
+        // Initialize App on DOM Ready
+        window.addEventListener('DOMContentLoaded', () => {
+            // Apply theme as dark automatically
+            document.documentElement.classList.add('dark');
+
+            // Render Links & Schedules
+            renderLinks();
+            setupScheduleNav();
+
+            // Setup Focus Audio Node
+            bgAudio = new Audio(AUDIO_SOURCES.jazz);
+            bgAudio.loop = true;
+
+            // Set Initial Schedule Day (default to current weekday, or Monday if weekend)
+            const daysMap = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const currentDayName = daysMap[new Date().getDay()];
+            const hasSchedule = DASHBOARD_DATA.schedule.some(s => s.day.toLowerCase() === currentDayName.toLowerCase());
+            
+            if (hasSchedule) {
+                selectScheduleDay(currentDayName);
+            } else {
+                // Default to first day in data
+                selectScheduleDay(DASHBOARD_DATA.schedule[0]?.day || "Monday");
+            }
+
+            // Keyboard Shortcuts
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const msModal = document.getElementById('minesweeper-modal');
+                    if (!msModal.classList.contains('hidden')) {
+                        toggleMinesweeperModal();
+                    } else {
+                        const s = document.getElementById('search-input');
+                        s.value = '';
+                        filterLinks('');
+                        s.blur();
+                    }
+                } else if (e.key === '/' && document.activeElement !== document.getElementById('search-input')) {
+                    e.preventDefault();
+                    switchTab('links');
+                    const s = document.getElementById('search-input');
+                    s.focus();
+                }
+            });
+
+            // Init backend logic for Minesweeper
+            initMinesweeper();
+        });
+
+        // Toggle Focus Ambient Audio
+        function toggleAudio() {
+            if (!bgAudio) return;
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+
+            if (isAudioPlaying) {
+                bgAudio.pause();
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                isAudioPlaying = false;
+            } else {
+                bgAudio.play().then(() => {
+                    playIcon.classList.add('hidden');
+                    pauseIcon.classList.remove('hidden');
+                    isAudioPlaying = true;
+                }).catch(err => {
+                    console.log("Audio play blocked by browser interaction policies: ", err);
+                });
+            }
+        }
+
+        // Handle Audio track changing
+        function changeAudioSource() {
+            if (!bgAudio) return;
+            const selectedVal = document.getElementById('audio-select').value;
+            const newSrc = AUDIO_SOURCES[selectedVal];
+
+            bgAudio.pause();
+            bgAudio.src = newSrc;
+
+            if (isAudioPlaying) {
+                bgAudio.play().catch(err => console.log(err));
+            }
+        }
+
+        // Tab Switching Logic
+        function switchTab(tab) {
+            currentTab = tab;
+            const linksBtn = document.getElementById('tab-links-btn');
+            const schedBtn = document.getElementById('tab-schedule-btn');
+            
+            const linksContent = document.getElementById('tab-links-content');
+            const schedContent = document.getElementById('tab-schedule-content');
+            const searchContainer = document.getElementById('search-container');
+
+            if (tab === 'links') {
+                linksBtn.className = "flex-1 sm:flex-initial px-4 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white";
+                schedBtn.className = "flex-1 sm:flex-initial px-4 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+                
+                linksContent.classList.remove('hidden');
+                setTimeout(() => linksContent.classList.remove('opacity-0'), 50);
+                
+                schedContent.classList.add('hidden', 'opacity-0');
+                searchContainer.classList.remove('hidden');
+            } else {
+                schedBtn.className = "flex-1 sm:flex-initial px-4 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white";
+                linksBtn.className = "flex-1 sm:flex-initial px-4 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+                
+                schedContent.classList.remove('hidden');
+                setTimeout(() => schedContent.classList.remove('opacity-0'), 50);
+                
+                linksContent.classList.add('hidden', 'opacity-0');
+                searchContainer.classList.add('hidden');
+            }
+        }
+
+        // Accordion Toggle for Sub-groups
+        function toggleSubGroup(button) {
+            const grid = button.nextElementSibling;
+            const arrowIcon = button.querySelector('.arrow-icon');
+            
+            if (grid.classList.contains('hidden')) {
+                grid.classList.remove('hidden');
+                arrowIcon.classList.remove('-rotate-90');
+            } else {
+                grid.classList.add('hidden');
+                arrowIcon.classList.add('-rotate-90');
+            }
+        }
+
+        // Toggle entire collapsible card
+        function toggleCardCollapse(button) {
+            const cardBody = button.closest('.bento-card').querySelector('.card-collapsible-body');
+            const arrowIcon = button.querySelector('.card-arrow-icon');
+            if (cardBody.classList.contains('hidden')) {
+                cardBody.classList.remove('hidden');
+                arrowIcon.classList.remove('-rotate-90');
+            } else {
+                cardBody.classList.add('hidden');
+                arrowIcon.classList.add('-rotate-90');
+            }
+        }
+
+        // Extract domain from URL or return a fallback icon element
+        function getLinkIconHTML(url, title, parentEmoji = null) {
+            const lowerTitle = title.toLowerCase().trim();
+            
+            // Check for specific grade levels to render custom sleek glassmorphism visual badges
+            if (lowerTitle === '1st') {
+                return `<div class="w-5 h-5 rounded-md bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center text-[10px] font-extrabold font-mono select-none shrink-0">1</div>`;
+            }
+            if (lowerTitle === '2nd') {
+                return `<div class="w-5 h-5 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-[10px] font-extrabold font-mono select-none shrink-0">2</div>`;
+            }
+            if (lowerTitle === '3rd') {
+                return `<div class="w-5 h-5 rounded-md bg-blue-500/20 text-blue-400 border border-blue-500/30 flex items-center justify-center text-[10px] font-extrabold font-mono select-none shrink-0">3</div>`;
+            }
+            if (lowerTitle === '4th') {
+                return `<div class="w-5 h-5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-[10px] font-extrabold font-mono select-none shrink-0">4</div>`;
+            }
+            if (lowerTitle === '5th') {
+                return `<div class="w-5 h-5 rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center text-[10px] font-extrabold font-mono select-none shrink-0">5</div>`;
+            }
+            if (lowerTitle.includes('k-2')) {
+                return `<div class="w-5 h-5 rounded-md bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex items-center justify-center text-[9px] font-extrabold font-mono select-none shrink-0">K2</div>`;
+            }
+            // Explicit layout logic to make Referrals spreadsheet stand out with a custom green spreadsheet-themed badge
+            if (lowerTitle.includes('referrals')) {
+                return `<div class="w-5 h-5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">📊</div>`;
+            }
+            // Custom badges for Mr M's Drive, Planning, and DL Course
+            if (lowerTitle.includes("mr m's drive")) {
+                return `
+                    <img 
+                        src="https://www.google.com/s2/favicons?sz=64&domain=drive.google.com" 
+                        class="w-5 h-5 rounded-md object-contain p-0.5 bg-white dark:bg-slate-900/50 shrink-0" 
+                        alt="Google Drive"
+                    />
+                `;
+            }
+            if (lowerTitle.includes("planning")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">✍🏻</div>`;
+            }
+            if (lowerTitle.includes("dl course")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">👓</div>`;
+            }
+            
+            // GRT custom icons
+            if (lowerTitle.includes("friday focus")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">🎯</div>`;
+            }
+            if (lowerTitle.includes("meeting agendas")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">📋</div>`;
+            }
+            if (lowerTitle.includes("dashboard")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">📈</div>`;
+            }
+            if (lowerTitle.includes("staffing")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">👥</div>`;
+            }
+
+            // Gifted ID custom icons
+            if (lowerTitle.includes("timeline")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">📅</div>`;
+            }
+            if (lowerTitle.includes("forms")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">📄</div>`;
+            }
+            if (lowerTitle.includes("observation lessons")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">🔎</div>`;
+            }
+            if (lowerTitle.includes("gic group")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">🤝</div>`;
+            }
+
+            // Admin custom icons
+            if (lowerTitle.includes("hcps aligned")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">🍎</div>`;
+            }
+            if (lowerTitle.includes("tech desk")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">🔧</div>`;
+            }
+            if (lowerTitle.includes("pspl")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">📖</div>`;
+            }
+            if (lowerTitle.includes("talented")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">🌟</div>`;
+            }
+            if (lowerTitle.includes("oracle eda")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">🏢</div>`;
+            }
+            if (lowerTitle.includes("myvrs")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">🛡️</div>`;
+            }
+            if (lowerTitle.includes("missionsquare")) {
+                return `<div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[11px] font-extrabold select-none shrink-0">💵</div>`;
+            }
+
+            // For hash links or internal triggers, provide a sleek fallback placeholder (or inherit parent sub-group emoji!)
+            if (!url || url.startsWith('#')) {
+                return `
+                    <div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-[10px] select-none text-slate-400 border border-slate-200/50 dark:border-slate-700/50 shrink-0">
+                        ${parentEmoji ? parentEmoji : '🔗'}
+                    </div>
+                `;
+            }
+            try {
+                const urlObj = new URL(url);
+                const domain = urlObj.hostname;
+                // High-res dynamic favicon fetcher
+                return `
+                    <img 
+                        src="https://www.google.com/s2/favicons?sz=64&domain=${domain}" 
+                        class="w-5 h-5 rounded-md object-contain p-0.5 bg-white dark:bg-slate-900/50 shrink-0" 
+                        alt=""
+                        onerror="this.onerror=null; this.outerHTML='<div class=\\'w-5 h-5 rounded-md bg-emerald-500/10 flex items-center justify-center text-[10px] shrink-0\\'>🌐</div>'"
+                    />
+                `;
+            } catch (e) {
+                return `<span class="text-xs shrink-0">🌐</span>`;
+            }
+        }
+
+        // Render Links Panel (Bento Style Layout supporting subheadings & toggling)
+        function renderLinks() {
+            const container = document.getElementById('links-grid');
+            container.innerHTML = '';
+
+            DASHBOARD_DATA.links.forEach((cat, catIdx) => {
+                const bentoCard = document.createElement('div');
+                bentoCard.className = `bento-card bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-start hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-150 relative overflow-hidden group ${cat.accentColor || ''}`;
+                bentoCard.setAttribute('data-category-index', catIdx);
+
+                let cardHTML = '';
+
+                // Handle Card-Level Collapsible Structure
+                if (cat.isCollapsible) {
+                    cardHTML += `
+                        <button onclick="toggleCardCollapse(this)" class="w-full flex items-center justify-between text-left focus:outline-none mb-1">
+                            <div class="flex-1 pr-2">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h2 class="font-bold text-sm tracking-tight text-slate-900 dark:text-slate-100 group-hover:text-emerald-500 transition-colors">${cat.category}</h2>
+                                    <span class="text-[10px] text-slate-400 font-mono">#${catIdx + 1}</span>
+                                </div>
+                                <p class="text-[11px] text-slate-400 dark:text-slate-500 leading-tight">${cat.description || ''}</p>
+                            </div>
+                            <svg class="w-4 h-4 card-arrow-icon transform -rotate-90 text-slate-400 group-hover:text-emerald-500 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="card-collapsible-body hidden w-full">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+                    `;
+
+                    cat.items.forEach((item) => {
+                        const priorityClass = item.isHighPriority 
+                            ? 'border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-500/5' 
+                            : 'border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30';
+
+                        const iconHTML = getLinkIconHTML(item.url, item.title);
+
+                        cardHTML += `
+                            <a 
+                                href="${item.url}" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                class="p-2.5 rounded-xl flex flex-col justify-between text-left hover:scale-[1.02] active:scale-[0.98] hover:bg-emerald-500/10 dark:hover:bg-emerald-500/10 transition-all duration-150 cursor-pointer link-item-card ${priorityClass}"
+                                data-title="${item.title.toLowerCase()}"
+                                data-subtitle="${item.subtitle ? item.subtitle.toLowerCase() : ''}"
+                            >
+                                <div class="flex items-center gap-2 w-full">
+                                    ${iconHTML}
+                                    <div class="truncate flex-1 min-w-0">
+                                        <div class="flex items-center justify-between gap-1.5">
+                                            <span class="font-semibold text-xs text-slate-800 dark:text-slate-200 truncate pr-1">${item.title}</span>
+                                            <svg class="w-3 h-3 text-slate-400 group-hover:text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                            </svg>
+                                        </div>
+                                        ${item.subtitle ? `<span class="text-[10px] text-slate-400 dark:text-slate-500 truncate block mt-0.5">${item.subtitle}</span>` : ''}
+                                    </div>
+                                </div>
+                            </a>
+                        `;
+                    });
+
+                    cardHTML += `
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Traditional Header
+                    cardHTML += `
+                        <div class="mb-2">
+                            <div class="flex items-center justify-between mb-1">
+                                <h2 class="font-bold text-sm tracking-tight text-slate-900 dark:text-slate-100 group-hover:text-emerald-500 transition-colors">${cat.category}</h2>
+                                <span class="text-[10px] text-slate-400 font-mono">#${catIdx + 1}</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400 dark:text-slate-500 leading-tight">${cat.description || ''}</p>
+                        </div>
+                    `;
+
+                    // Handle Sub-grouped layout vs Flat layout
+                    if (cat.groups) {
+                        cardHTML += `<div class="flex flex-col gap-2.5 mt-2 bento-groups-container">`;
+                        cat.groups.forEach((group) => {
+                            let rawHeading = group.subHeading;
+                            let extractedEmoji = '🏫';
+                            if (rawHeading.includes('🐊')) { extractedEmoji = '🐊'; rawHeading = rawHeading.replace('🐊', ''); }
+                            else if (rawHeading.includes('🐦')) { extractedEmoji = '🐦'; rawHeading = rawHeading.replace('🐦', ''); }
+                            else if (rawHeading.includes('🖥️')) { extractedEmoji = '🖥️'; rawHeading = rawHeading.replace('🖥️', ''); }
+
+                            cardHTML += `
+                                <div class="bento-sub-group">
+                                    <button onclick="toggleSubGroup(this)" class="w-full flex items-center justify-between text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase mb-1 focus:outline-none hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
+                                        <span class="flex items-center gap-1.5">
+                                            <span class="w-4 h-4 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[10px] border border-slate-200/50 dark:border-slate-700/50 select-none">${extractedEmoji}</span>
+                                            <span>${rawHeading}</span>
+                                        </span>
+                                        <svg class="w-3 h-3 arrow-icon transform -rotate-90 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+                                    <div class="grid grid-cols-2 gap-1.5 group-links-grid hidden">
+                            `;
+                            group.items.forEach((item) => {
+                                const priorityClass = item.isHighPriority 
+                                    ? 'border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-500/5' 
+                                    : 'border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30';
+
+                                const iconHTML = getLinkIconHTML(item.url, item.title, extractedEmoji);
+
+                                cardHTML += `
+                                    <a 
+                                        href="${item.url}" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        class="p-2 rounded-xl flex flex-col justify-center text-left hover:scale-[1.02] active:scale-[0.98] hover:bg-emerald-500/10 dark:hover:bg-emerald-500/10 transition-all duration-150 cursor-pointer link-item-card ${priorityClass}"
+                                        data-title="${item.title.toLowerCase()}"
+                                        data-subtitle="${item.subtitle ? item.subtitle.toLowerCase() : ''}"
+                                    >
+                                        <div class="flex items-center gap-2">
+                                            ${iconHTML}
+                                            <div class="truncate flex-1 min-w-0">
+                                                <div class="flex items-center justify-between gap-1">
+                                                    <span class="font-semibold text-xs text-slate-800 dark:text-slate-200 truncate pr-0.5">${item.title}</span>
+                                                    <svg class="w-2.5 h-2.5 text-slate-400 group-hover:text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                                    </svg>
+                                                </div>
+                                                ${item.subtitle ? `<span class="text-[9px] text-slate-400 dark:text-slate-500 truncate block mt-0.5">${item.subtitle}</span>` : ''}
+                                            </div>
+                                        </div>
+                                    </a>
+                                `;
+                            });
+                            cardHTML += `
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        cardHTML += `</div>`;
+                    } else {
+                        // Traditional Flat Items Layout
+                        cardHTML += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">`;
+                        cat.items.forEach((item) => {
+                            const priorityClass = item.isHighPriority 
+                                ? 'border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-500/5' 
+                                : 'border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30';
+
+                            const iconHTML = getLinkIconHTML(item.url, item.title);
+
+                            cardHTML += `
+                                <a 
+                                    href="${item.url}" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    class="p-2.5 rounded-xl flex flex-col justify-between text-left hover:scale-[1.02] active:scale-[0.98] hover:bg-emerald-500/10 dark:hover:bg-emerald-500/10 transition-all duration-150 cursor-pointer link-item-card ${priorityClass}"
+                                    data-title="${item.title.toLowerCase()}"
+                                    data-subtitle="${item.subtitle ? item.subtitle.toLowerCase() : ''}"
+                                >
+                                    <div class="flex items-center gap-2 w-full">
+                                        ${iconHTML}
+                                        <div class="truncate flex-1 min-w-0">
+                                            <div class="flex items-center justify-between gap-1.5">
+                                                <span class="font-semibold text-xs text-slate-800 dark:text-slate-200 truncate pr-1">${item.title}</span>
+                                                <svg class="w-3 h-3 text-slate-400 group-hover:text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                                </svg>
+                                            </div>
+                                            ${item.subtitle ? `<span class="text-[10px] text-slate-400 dark:text-slate-500 truncate block mt-0.5">${item.subtitle}</span>` : ''}
+                                        </div>
+                                    </div>
+                                </a>
+                            `;
+                        });
+                        cardHTML += `</div>`;
+                    }
+                }
+
+                bentoCard.innerHTML = cardHTML;
+                container.appendChild(bentoCard);
+            });
+        }
+
+        // Live Link Filter functionality (Updated for collapsible sub-group layout)
+        function filterLinks(query) {
+            const cleanQuery = query.toLowerCase().trim();
+            const categoryCards = document.querySelectorAll('#links-grid > div');
+
+            categoryCards.forEach((card) => {
+                const linkElements = card.querySelectorAll('.link-item-card');
+                let visibleLinksCount = 0;
+
+                linkElements.forEach((link) => {
+                    const title = link.getAttribute('data-title');
+                    const subtitle = link.getAttribute('data-subtitle');
+
+                    if (title.includes(cleanQuery) || subtitle.includes(cleanQuery)) {
+                        link.classList.remove('hidden');
+                        visibleLinksCount++;
+                    } else {
+                        link.classList.add('hidden');
+                    }
+                });
+
+                // Dynamically hide/show empty sub-group containers when filtering
+                const subGroups = card.querySelectorAll('.bento-sub-group');
+                subGroups.forEach((group) => {
+                    const activeGroupLinks = group.querySelectorAll('.link-item-card:not(.hidden)');
+                    const grid = group.querySelector('.group-links-grid');
+                    const arrowIcon = group.querySelector('.arrow-icon');
+                    
+                    if (activeGroupLinks.length === 0 && cleanQuery !== '') {
+                        group.classList.add('hidden');
+                    } else {
+                        group.classList.remove('hidden');
+                        
+                        // Smart Search Expand: Automatically force-expand groups if there is an active search query matching items inside it
+                        if (cleanQuery !== '') {
+                            grid.classList.remove('hidden');
+                            if (arrowIcon) {
+                                arrowIcon.classList.remove('-rotate-90');
+                            }
+                        }
+                    }
+                });
+
+                // Dynamically handle Card-Level Collapsible Expansion on Filter match
+                const collapsibleBodies = card.querySelectorAll('.card-collapsible-body');
+                collapsibleBodies.forEach((body) => {
+                    const activeCardLinks = body.querySelectorAll('.link-item-card:not(.hidden)');
+                    const arrowIcon = card.querySelector('.card-arrow-icon');
+                    
+                    if (activeCardLinks.length > 0 && cleanQuery !== '') {
+                        body.classList.remove('hidden');
+                        if (arrowIcon) {
+                            arrowIcon.classList.remove('-rotate-90');
+                        }
+                    } else if (cleanQuery === '') {
+                        // Standard collapsed state when search cleared
+                        body.classList.add('hidden');
+                        if (arrowIcon) {
+                            arrowIcon.classList.add('-rotate-90');
+                        }
+                    }
+                });
+
+                // Hide complete Bento category block if no links match query
+                if (visibleLinksCount === 0 && cleanQuery !== '') {
+                    card.classList.add('hidden');
+                } else {
+                    card.classList.remove('hidden');
+                }
+            });
+        }
+
+        // Render Day buttons for schedule
+        function setupScheduleNav() {
+            const nav = document.getElementById('schedule-day-nav');
+            nav.innerHTML = '';
+
+            DASHBOARD_DATA.schedule.forEach((dayData) => {
+                const button = document.createElement('button');
+                button.className = "px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors shrink-0";
+                button.innerText = dayData.day;
+                button.id = `day-btn-${dayData.day}`;
+                button.onclick = () => selectScheduleDay(dayData.day);
+                nav.appendChild(button);
+            });
+        }
+
+        // Change displayed schedule day
+        function selectScheduleDay(dayName) {
+            currentScheduleDay = dayName;
+            
+            // Set title
+            document.getElementById('active-day-title').innerText = `${dayName}'s Teaching Schedule`;
+
+            // Style active navigation pill
+            DASHBOARD_DATA.schedule.forEach((dayData) => {
+                const btn = document.getElementById(`day-btn-${dayData.day}`);
+                if (btn) {
+                    if (dayData.day === dayName) {
+                        btn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-500 text-white shrink-0 shadow-sm shadow-emerald-500/20";
+                    } else {
+                        btn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors shrink-0";
+                    }
+                }
+            });
+
+            // Find data for selected day and render timeline
+            const dayData = DASHBOARD_DATA.schedule.find(s => s.day === dayName);
+            const timelineContainer = document.getElementById('schedule-timeline');
+            timelineContainer.innerHTML = '';
+
+            if (dayData && dayData.classes.length > 0) {
+                dayData.classes.forEach((c) => {
+                    const row = document.createElement('div');
+                    row.className = "p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors";
+
+                    // Determine Type Badge colors
+                    let typeBadgeClass = "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300";
+                    if (c.type === 'Lecture') {
+                        typeBadgeClass = "bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-200/50 dark:border-blue-800/20";
+                    } else if (c.type === 'Lab') {
+                        typeBadgeClass = "bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-400 border border-purple-200/50 dark:border-purple-800/20";
+                    } else if (c.type === 'Office Hours') {
+                        typeBadgeClass = "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/20";
+                    }
+
+                    row.innerHTML = `
+                        <div class="flex items-center gap-4">
+                            <!-- Left Marker/Dot -->
+                            <div class="hidden sm:flex w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700 relative items-center justify-center">
+                                <span class="absolute w-1 h-1 bg-white rounded-full"></span>
+                            </div>
+                            
+                            <!-- Class details -->
+                            <div>
+                                <span class="text-xs font-mono font-bold text-emerald-500 block mb-0.5">${c.time}</span>
+                                <h4 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100 leading-tight">${c.course}</h4>
+                            </div>
+                        </div>
+
+                        <!-- Right Info Blocks (Room & Type) -->
+                        <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                            <span class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                ${c.room}
+                            </span>
+                            <span class="text-[10px] tracking-wider font-extrabold uppercase px-2 py-1 rounded-md ${typeBadgeClass}">
+                                ${c.type}
+                            </span>
+                        </div>
+                    `;
+                    timelineContainer.appendChild(row);
+                });
+            } else {
+                timelineContainer.innerHTML = `
+                    <div class="p-8 text-center text-slate-400 dark:text-slate-500">
+                        <svg class="w-8 h-8 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-xs font-semibold">No classes scheduled for ${dayName}.</p>
+                    </div>
+                `;
+            }
+        }
+
+        /***********************************************************
+         * RETRO MINESWEEPER LOGIC & ENGINE
+         ***********************************************************/
+        const MS_COLS = 9;
+        const MS_ROWS = 9;
+        const MS_MINES = 10;
+
+        let msBoard = [];
+        let msGameOver = false;
+        let msGameWon = false;
+        let msMinesRemaining = MS_MINES;
+        let msSeconds = 0;
+        let msTimerInterval = null;
+        let msFirstClick = true;
+        let msInputMode = 'dig'; // 'dig' or 'flag'
+
+        // Toggle modal visible
+        function toggleMinesweeperModal() {
+            const modal = document.getElementById('minesweeper-modal');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                // Resume game timer if active
+                if (!msGameOver && !msGameWon && msSeconds > 0 && !msFirstClick) {
+                    startMSTimer();
+                }
+            } else {
+                modal.classList.add('hidden');
+                // Auto-pause timer when modal closes to protect CPU & save game state
+                clearInterval(msTimerInterval);
+            }
+        }
+
+        // Toggle mobile tool mode (Dig vs Flag)
+        function setMSMode(mode) {
+            msInputMode = mode;
+            const digBtn = document.getElementById('ms-mode-dig');
+            const flagBtn = document.getElementById('ms-mode-flag');
+            if (mode === 'dig') {
+                digBtn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-500 text-white transition-all shadow-sm flex items-center gap-1";
+                flagBtn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-500 dark:text-slate-400 transition-all flex items-center gap-1";
+            } else {
+                flagBtn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-500 text-white transition-all shadow-sm flex items-center gap-1";
+                digBtn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-500 dark:text-slate-400 transition-all flex items-center gap-1";
+            }
+        }
+
+        // Initialize board
+        function initMinesweeper() {
+            clearInterval(msTimerInterval);
+            msGameOver = false;
+            msGameWon = false;
+            msFirstClick = true;
+            msSeconds = 0;
+            msMinesRemaining = MS_MINES;
+            msBoard = [];
+
+            document.getElementById('mine-counter').innerText = `🚩 ${String(msMinesRemaining).padStart(3, '0')}`;
+            document.getElementById('ms-timer').innerText = `⏱️ 000`;
+            document.getElementById('ms-face-btn').innerText = `😊`;
+
+            // Build structural grid matrix
+            for (let r = 0; r < MS_ROWS; r++) {
+                msBoard[r] = [];
+                for (let c = 0; c < MS_COLS; c++) {
+                    msBoard[r][c] = {
+                        row: r,
+                        col: c,
+                        isMine: false,
+                        isRevealed: false,
+                        isFlagged: false,
+                        neighborMinesCount: 0
+                    };
+                }
+            }
+
+            renderMSBoard();
+        }
+
+        // Render dynamic board onto DOM
+        function renderMSBoard() {
+            const gridContainer = document.getElementById('minesweeper-grid');
+            gridContainer.innerHTML = '';
+
+            for (let r = 0; r < MS_ROWS; r++) {
+                for (let c = 0; c < MS_COLS; c++) {
+                    const cellData = msBoard[r][c];
+                    const cellBtn = document.createElement('button');
+                    
+                    // Default closed state classes
+                    let cellClasses = "aspect-square flex items-center justify-center text-xs font-black rounded-lg border focus:outline-none transition-all duration-75 select-none ";
+                    
+                    if (cellData.isRevealed) {
+                        cellClasses += "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700/60 ";
+                        if (cellData.isMine) {
+                            cellClasses += "bg-red-500 dark:bg-red-500/80 ";
+                            cellBtn.innerText = "💣";
+                        } else if (cellData.neighborMinesCount > 0) {
+                            cellBtn.innerText = cellData.neighborMinesCount;
+                            // Retro number color palette
+                            const colors = [
+                                'text-blue-500', 'text-green-500', 'text-red-500', 
+                                'text-purple-500', 'text-amber-500', 'text-cyan-500', 
+                                'text-pink-500', 'text-slate-500'
+                            ];
+                            cellClasses += colors[cellData.neighborMinesCount - 1] + " ";
+                        }
+                    } else {
+                        cellClasses += "bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 shadow-sm active:bg-slate-100 dark:active:bg-slate-800/80 ";
+                        if (cellData.isFlagged) {
+                            cellBtn.innerText = "🚩";
+                            cellClasses += "text-red-500 ";
+                        }
+                    }
+
+                    cellBtn.className = cellClasses;
+                    
+                    // Primary click (Sweeping/Revealing or Flagging if toggle mode is on)
+                    cellBtn.onclick = (e) => {
+                        e.preventDefault();
+                        if (msInputMode === 'flag') {
+                            handleRightClick(r, c);
+                        } else {
+                            handleLeftClick(r, c);
+                        }
+                    };
+
+                    // Context Menu Flag toggle (Native Right Click)
+                    cellBtn.oncontextmenu = (e) => {
+                        e.preventDefault();
+                        handleRightClick(r, c);
+                    };
+
+                    gridContainer.appendChild(cellBtn);
+                }
+            }
+        }
+
+        // Generate and place mines (first click logic avoids planting mine where user clicked)
+        function generateMines(excludeRow, excludeCol) {
+            let minesPlaced = 0;
+            while (minesPlaced < MS_MINES) {
+                const r = Math.floor(Math.random() * MS_ROWS);
+                const c = Math.floor(Math.random() * MS_COLS);
+
+                // Avoid placing on first click tile or overlapping existing mine
+                if ((r !== excludeRow || c !== excludeCol) && !msBoard[r][c].isMine) {
+                    msBoard[r][c].isMine = true;
+                    minesPlaced++;
+                }
+            }
+
+            // Calculate adjacent neighbor metrics
+            for (let r = 0; r < MS_ROWS; r++) {
+                for (let c = 0; c < MS_COLS; c++) {
+                    if (!msBoard[r][c].isMine) {
+                        let count = 0;
+                        // Search 8 directions
+                        for (let i = -1; i <= 1; i++) {
+                            for (let j = -1; j <= 1; j++) {
+                                if (r + i >= 0 && r + i < MS_ROWS && c + j >= 0 && c + j < MS_COLS) {
+                                    if (msBoard[r + i][c + j].isMine) count++;
+                                }
+                            }
+                        }
+                        msBoard[r][c].neighborMinesCount = count;
+                    }
+                }
+            }
+        }
+
+        // Start Stopwatch
+        function startMSTimer() {
+            clearInterval(msTimerInterval);
+            msTimerInterval = setInterval(() => {
+                msSeconds++;
+                if (msSeconds > 999) msSeconds = 999;
+                document.getElementById('ms-timer').innerText = `⏱️ ${String(msSeconds).padStart(3, '0')}`;
+            }, 1000);
+        }
+
+        // Handle sweeps (left click)
+        function handleLeftClick(row, col) {
+            if (msGameOver || msGameWon) return;
+
+            const cell = msBoard[row][col];
+            if (cell.isRevealed || cell.isFlagged) return;
+
+            if (msFirstClick) {
+                msFirstClick = false;
+                generateMines(row, col);
+                startMSTimer();
+            }
+
+            if (cell.isMine) {
+                // Game Over state triggered
+                triggerLoss(row, col);
+                return;
+            }
+
+            revealCellRecursively(row, col);
+            checkWinState();
+            renderMSBoard();
+        }
+
+        // Recursive flood fill to open adjacent empty cells
+        function revealCellRecursively(row, col) {
+            if (row < 0 || row >= MS_ROWS || col < 0 || col >= MS_COLS) return;
+            const cell = msBoard[row][col];
+            if (cell.isRevealed || cell.isFlagged || cell.isMine) return;
+
+            cell.isRevealed = true;
+
+            // Cascade reveal if no adjacent mines exist
+            if (cell.neighborMinesCount === 0) {
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        revealCellRecursively(row + i, col + j);
+                    }
+                }
+            }
+        }
+
+        // Toggle Flag (right click or mobile toggle)
+        function handleRightClick(row, col) {
+            if (msGameOver || msGameWon) return;
+
+            const cell = msBoard[row][col];
+            if (cell.isRevealed) return;
+
+            cell.isFlagged = !cell.isFlagged;
+            msMinesRemaining += cell.isFlagged ? -1 : 1;
+            document.getElementById('mine-counter').innerText = `🚩 ${String(msMinesRemaining).padStart(3, '0')}`;
+
+            renderMSBoard();
+        }
+
+        // Verify if all clear tiles are open
+        function checkWinState() {
+            let win = true;
+            for (let r = 0; r < MS_ROWS; r++) {
+                for (let c = 0; c < MS_COLS; c++) {
+                    const cell = msBoard[r][c];
+                    if (!cell.isMine && !cell.isRevealed) {
+                        win = false;
+                        break;
+                    }
+                }
+            }
+
+            if (win) {
+                msGameWon = true;
+                clearInterval(msTimerInterval);
+                document.getElementById('ms-face-btn').innerText = `😎`;
+                
+                // Flag remaining hidden mines automatically
+                for (let r = 0; r < MS_ROWS; r++) {
+                    for (let c = 0; c < MS_COLS; c++) {
+                        if (msBoard[r][c].isMine) {
+                            msBoard[r][c].isFlagged = true;
+                        }
+                    }
+                }
+                msMinesRemaining = 0;
+                document.getElementById('mine-counter').innerText = `🚩 000`;
+            }
+        }
+
+        // Trigger defeat and expose other mines
+        function triggerLoss(clickedRow, clickedCol) {
+            msGameOver = true;
+            clearInterval(msTimerInterval);
+            document.getElementById('ms-face-btn').innerText = `😵`;
+
+            // Reveal all hidden mines
+            for (let r = 0; r < MS_ROWS; r++) {
+                for (let c = 0; c < MS_COLS; c++) {
+                    const cell = msBoard[r][c];
+                    if (cell.isMine) {
+                        cell.isRevealed = true;
+                    }
+                }
+            }
+            renderMSBoard();
+        }
+    </script>
+</body>
+</html>
