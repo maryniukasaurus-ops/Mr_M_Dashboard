@@ -222,155 +222,20 @@
     <footer class="mt-12 mb-6 text-center text-xs text-slate-400 dark:text-slate-600">
         <p>Press <kbd class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-800 rounded">Esc</kbd> or <kbd class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-800 rounded">/</kbd> to search/filter. Single-file responsive Link Dashboard.</p>
     </footer>
-
+    
+<script src="links.js"></script>
+    
     <!-- CENTRAL JS CONFIGURATION & ENGINE -->
     <script>
-        /**
-         * DYNAMIC DATA DICTIONARY
-         * Modify this JSON structure to instantly add, edit, or remove links, categories, or schedules.
-         */
-        const DASHBOARD_DATA = {
-            links: [
-                {
-                    category: "Schools",
-                    description: "Select schedule or view staff lists for each school.",
-                    accentColor: "border-l-4 border-l-rose-500",
-                    groups: [
-                        {
-                            subHeading: "JLAES🐊",
-                            items: [
-                                { title: "Referrals 📊", url: "#jlaes-referrals", subtitle: "Referral spreadsheet database" },
-                                { title: "Schedule 📅", url: "#jlaes-schedule", subtitle: "Bell & class times" },
-                                { title: "Faculty 👥", url: "#jlaes-faculty", subtitle: "Staff & email roster" },
-                                { title: "School Drive 📁", url: "#jlaes-drive", subtitle: "Shared Google Drive" }
-                            ]
-                        },
-                        {
-                            subHeading: "FOES🐦",
-                            items: [
-                                { title: "Referrals 📊", url: "#foes-referrals", subtitle: "Referral spreadsheet database" },
-                                { title: "Schedule 📅", url: "#foes-schedule", subtitle: "Bell & class times" },
-                                { title: "Faculty 👥", url: "#foes-faculty", subtitle: "Staff & email roster" },
-                                { title: "Morning Announcements 📣", url: "#foes-announcements", subtitle: "Daily morning broadcast" },
-                                { title: "School Hub 🏫", url: "#foes-hub", subtitle: "FOES shared portal" }
-                            ]
-                        },
-                        {
-                            subHeading: "HVA🖥️",
-                            items: [
-                                { title: "Referrals 📊", url: "#hva-referrals", subtitle: "Referral spreadsheet database" },
-                                { title: "Schedule 📅", url: "#hva-schedule", subtitle: "Bell & class times" },
-                                { title: "Faculty 👥", url: "#hva-faculty", subtitle: "Staff & email roster" }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    category: "Access",
-                    description: "Direct student and teacher portal gateways.",
-                    accentColor: "border-l-4 border-l-amber-500",
-                    items: [
-                        { title: "Mr M's Drive", url: "https://drive.google.com", subtitle: "Google Drive files" },
-                        { title: "Planning", url: "#planning", subtitle: "Lesson & schedule planning" },
-                        { title: "DL Course", url: "#dl-course", subtitle: "Digital learning systems" },
-                        { title: "Schoology", url: "https://schoology.com", subtitle: "LMS & coursework" },
-                        { title: "PowerSchool", url: "https://powerschool.com", subtitle: "Grades & records" },
-                        { title: "CogAT", url: "https://riversideinsights.com", subtitle: "Cognitive abilities test" },
-                        { title: "Clever", url: "https://clever.com", subtitle: "Single sign-on portal" }
-                    ]
-                },
-                {
-                    category: "GRT",
-                    description: "Gifted Resource Teacher programmatic files and dashboards.",
-                    accentColor: "border-l-4 border-l-blue-500",
-                    items: [
-                        { title: "Friday Focus", url: "#friday-focus", subtitle: "Weekly focus & notes" },
-                        { title: "Meeting Agendas", url: "#meeting-agendas", subtitle: "Collaboration & minutes" },
-                        { title: "Gifted Dashboard", url: "#gifted-dashboard", subtitle: "Student records & data" },
-                        { title: "K-5 Advanced Dashboard", url: "#k5-advanced-dashboard", subtitle: "Advanced learner tracking" },
-                        { title: "Staffing", url: "#staffing", subtitle: "Allocations & rosters" }
-                    ]
-                },
-                {
-                    category: "Gifted Curriculum",
-                    description: "Primary responses and grade curriculum systems.",
-                    accentColor: "border-l-4 border-l-purple-500",
-                    items: [
-                        { title: "K-2 Response", url: "#k2-response", subtitle: "Response materials" },
-                        { title: "1st", url: "#1st-grade", subtitle: "Grade curriculum" },
-                        { title: "2nd", url: "#2nd-grade", subtitle: "Grade curriculum" },
-                        { title: "3rd", url: "#3rd-grade", subtitle: "Grade curriculum" },
-                        { title: "4th", url: "#4th-grade", subtitle: "Grade curriculum" },
-                        { title: "5th", url: "#5th-grade", subtitle: "Grade curriculum" }
-                    ]
-                },
-                {
-                    category: "Gifted ID",
-                    description: "Identification timelines, referral forms, and screening lessons.",
-                    accentColor: "border-l-4 border-l-cyan-500",
-                    items: [
-                        { title: "Timeline", url: "#timeline", subtitle: "Referral & testing windows" },
-                        { title: "Forms", url: "#forms", subtitle: "Referral, permission, and rating scales" },
-                        { title: "Observation Lessons", url: "#observation-lessons", subtitle: "Whole-class screening materials" },
-                        { title: "GIC Group", url: "#gic-group", subtitle: "Gifted Identification Committee roster" }
-                    ]
-                },
-                {
-                    category: "Admin",
-                    description: "Administrative portals and employee systems.",
-                    accentColor: "border-l-4 border-l-slate-500",
-                    isCollapsible: true,
-                    items: [
-                        { title: "HCPS Aligned Curriculum", url: "#hcps-curriculum", subtitle: "Aligned curriculum framework" },
-                        { title: "HCPS Tech Desk", url: "#hcps-tech-desk", subtitle: "IT support ticketing system" },
-                        { title: "PSPL", url: "#pspl", subtitle: "Professional learning & training" },
-                        { title: "TalentEd", url: "#talented", subtitle: "Performance management portal" },
-                        { title: "Oracle EDA", url: "#oracle-eda", subtitle: "Financials & HR dashboard" },
-                        { title: "MyVRS", url: "#myvrs", subtitle: "Retirement benefits dashboard" },
-                        { title: "MissionSquare Retirement", url: "#missionsquare", subtitle: "Retirement asset manager" }
-                    ]
-                }
-            ],
-            schedule: [
-                {
-                    day: "Monday",
-                    classes: [
-                        { time: "09:00 AM - 10:30 AM", course: "CS 101: Intro to Programming", room: "Tech Hall 203", type: "Lecture" },
-                        { time: "11:00 AM - 12:30 PM", course: "CS 302: Database Architectures", room: "Science Block 4B", type: "Lecture" },
-                        { time: "02:00 PM - 03:30 PM", course: "Office Hours", room: "Faculty Suite 12", type: "Office Hours" }
-                    ]
-                },
-                {
-                    day: "Tuesday",
-                    classes: [
-                        { time: "10:00 AM - 11:30 AM", course: "CS 101: Lab Section A", room: "Lab A, Annex", type: "Lab" },
-                        { time: "01:00 PM - 02:30 PM", course: "Department Seminar", room: "Main Auditorium", type: "Meeting" }
-                    ]
-                },
-                {
-                    day: "Wednesday",
-                    classes: [
-                        { time: "09:00 AM - 10:30 AM", course: "CS 101: Intro to Programming", room: "Tech Hall 203", type: "Lecture" },
-                        { time: "11:00 AM - 12:30 PM", course: "CS 302: Database Architectures", room: "Science Block 4B", type: "Lecture" },
-                        { time: "03:00 PM - 05:00 PM", course: "CS 499: Senior Capstones", room: "Design Studio", type: "Seminar" }
-                    ]
-                },
-                {
-                    day: "Thursday",
-                    classes: [
-                        { time: "10:00 AM - 11:30 AM", course: "CS 101: Lab Section B", room: "Lab A, Annex", type: "Lab" },
-                        { time: "02:00 PM - 03:30 PM", course: "Office Hours", room: "Faculty Suite 12", type: "Office Hours" }
-                    ]
-                },
-                {
-                    day: "Friday",
-                    classes: [
-                        { time: "09:00 AM - 11:00 AM", course: "Research & Development Block", room: "Office Studio", type: "Research" },
-                        { time: "01:00 PM - 02:30 PM", course: "Curriculum Planning", room: "Virtual Meet", type: "Meeting" }
-                    ]
-                }
-            ]
-        };
+        const DASHBOARD_DATA = window.DASHBOARD_DATA || {
+    links: [
+        // You can leave this empty, or keep a few default fallback links 
+        // in case links.js ever fails to load.
+    ],
+    schedule: [
+        // You can leave this empty, or keep a basic schedule fallback
+    ]
+};
 
         // AUDIO CONTEXT SOURCES (Fixed CORS/Hotlinking restrictions for rain sound loop)
         const AUDIO_SOURCES = {
