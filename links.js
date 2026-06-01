@@ -12,7 +12,7 @@ window.DASHBOARD_DATA = {
                 {
                     subHeading: "JLAES🐊",
                     items: [
-                        { title: "Referrals 📊", url: "[https://example.com/jlaes-referrals](https://example.com/jlaes-referrals)", subtitle: "Referral spreadsheet database" },
+                        { title: "Referrals 📊", url: "https://docs.google.com/spreadsheets/d/1lNNydpT72BnjHuM_og7B5Vv9suhr3gfMbs00zl_m0D8/edit?usp=sharing", subtitle: "Referral spreadsheet database" },
                         { title: "Schedule 📅", url: "[https://example.com/jlaes-schedule](https://example.com/jlaes-schedule)", subtitle: "Bell & class times" },
                         { title: "Faculty 👥", url: "[https://example.com/jlaes-faculty](https://example.com/jlaes-faculty)", subtitle: "Staff & email roster" },
                         { title: "School Drive 📁", url: "[https://example.com/jlaes-drive](https://example.com/jlaes-drive)", subtitle: "Shared Google Drive" }
